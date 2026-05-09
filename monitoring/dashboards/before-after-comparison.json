@@ -1,0 +1,24 @@
+{
+  "title": "Before After Comparison",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "HTTP request p95",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum by (le, job) (rate(http_server_requests_seconds_bucket[1m])))", "legendFormat": "{{job}}"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP request rate",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {"expr": "sum by (job) (rate(http_server_requests_seconds_count[1m]))", "legendFormat": "{{job}}"}
+      ]
+    }
+  ]
+}

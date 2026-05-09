@@ -1,0 +1,33 @@
+services:
+  postgres-before:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: before_orders
+      POSTGRES_USER: before
+      POSTGRES_PASSWORD: before
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-before-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U before -d before_orders"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  before-api:
+    build:
+      context: ./api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-before:5432/before_orders
+      SPRING_DATASOURCE_USERNAME: before
+      SPRING_DATASOURCE_PASSWORD: before
+      APP_INITIAL_STOCK: ${APP_INITIAL_STOCK:-1000}
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres-before:
+        condition: service_healthy
+
+volumes:
+  postgres-before-data:

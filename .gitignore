@@ -1,0 +1,20 @@
+# Build outputs
+build/
+.gradle/
+out/
+target/
+
+# Runtime and load-test outputs
+load-tests/results/
+
+# Local tools installed for this workspace
+tools/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log

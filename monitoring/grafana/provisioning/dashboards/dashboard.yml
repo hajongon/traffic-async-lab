@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: traffic-async-lab
+    orgId: 1
+    folder: Traffic Async Lab
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/grafana/dashboards

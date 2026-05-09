@@ -1,0 +1,35 @@
+{
+  "title": "After Detail",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "After API and Worker request rate",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "sum by (job) (rate(http_server_requests_seconds_count{job=~\"after-api|after-worker\"}[1m]))", "legendFormat": "{{job}}"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "RabbitMQ queue depth",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "rabbitmq_queue_messages{queue=\"orders.created.queue\"}", "legendFormat": "total"},
+        {"expr": "rabbitmq_queue_messages_ready{queue=\"orders.created.queue\"}", "legendFormat": "ready"},
+        {"expr": "rabbitmq_queue_messages_unacked{queue=\"orders.created.queue\"}", "legendFormat": "unacked"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "RabbitMQ publish vs ack rate",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {"expr": "sum(rate(rabbitmq_global_messages_routed_total[1m]))", "legendFormat": "routed"},
+        {"expr": "sum(rate(rabbitmq_global_messages_acknowledged_total{queue_type=\"rabbit_classic_queue\"}[1m]))", "legendFormat": "ack"}
+      ]
+    }
+  ]
+}

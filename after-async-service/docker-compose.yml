@@ -1,0 +1,89 @@
+services:
+  postgres-after:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: after_orders
+      POSTGRES_USER: after
+      POSTGRES_PASSWORD: after
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-after-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U after -d after_orders"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis-after:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  rabbitmq-after:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: after
+      RABBITMQ_DEFAULT_PASS: after
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15692:15692"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  after-api:
+    build:
+      context: ./api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-after:5432/after_orders
+      SPRING_DATASOURCE_USERNAME: after
+      SPRING_DATASOURCE_PASSWORD: after
+      SPRING_DATA_REDIS_HOST: redis-after
+      SPRING_RABBITMQ_HOST: rabbitmq-after
+      SPRING_RABBITMQ_USERNAME: after
+      SPRING_RABBITMQ_PASSWORD: after
+      APP_INITIAL_STOCK: ${APP_INITIAL_STOCK:-1000}
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres-after:
+        condition: service_healthy
+      redis-after:
+        condition: service_healthy
+      rabbitmq-after:
+        condition: service_healthy
+
+  after-worker:
+    build:
+      context: ./worker
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-after:5432/after_orders
+      SPRING_DATASOURCE_USERNAME: after
+      SPRING_DATASOURCE_PASSWORD: after
+      SPRING_DATA_REDIS_HOST: redis-after
+      SPRING_RABBITMQ_HOST: rabbitmq-after
+      SPRING_RABBITMQ_USERNAME: after
+      SPRING_RABBITMQ_PASSWORD: after
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres-after:
+        condition: service_healthy
+      redis-after:
+        condition: service_healthy
+      rabbitmq-after:
+        condition: service_healthy
+
+volumes:
+  postgres-after-data:

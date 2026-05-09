@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Before Sync Orders</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 32px; color: #1f2937; }
+    button { padding: 10px 14px; border: 1px solid #374151; background: #111827; color: white; cursor: pointer; }
+    pre { background: #f3f4f6; padding: 16px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Before Sync Orders</h1>
+  <button id="order">주문</button>
+  <button id="refresh">새로고침</button>
+  <pre id="output"></pre>
+  <script>
+    const api = 'http://localhost:8081';
+    const output = document.querySelector('#output');
+
+    async function refresh() {
+      const [products, stats] = await Promise.all([
+        fetch(`${api}/products`).then((r) => r.json()),
+        fetch(`${api}/stats`).then((r) => r.json()),
+      ]);
+      output.textContent = JSON.stringify({ products, stats }, null, 2);
+    }
+
+    document.querySelector('#order').addEventListener('click', async () => {
+      const order = await fetch(`${api}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: 1, userId: `web-${Date.now()}` }),
+      }).then((r) => r.json());
+      output.textContent = JSON.stringify(order, null, 2);
+    });
+    document.querySelector('#refresh').addEventListener('click', refresh);
+    refresh();
+  </script>
+</body>
+</html>
