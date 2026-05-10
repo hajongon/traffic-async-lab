@@ -19,6 +19,10 @@ load-before:
 load-after:
 	bash scripts/run-after-load.sh
 
+run-before-load: load-before
+
+run-after-load: load-after
+
 compare:
 	bash scripts/compare-result.sh
 
