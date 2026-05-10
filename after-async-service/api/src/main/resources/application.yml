@@ -23,7 +23,7 @@ spring:
     open-in-view: false
 
 app:
-  initial-stock: ${APP_INITIAL_STOCK:1000}
+  initial-stock: ${APP_INITIAL_STOCK:1000000}
   queue:
     exchange: orders.exchange
     routing-key: orders.created

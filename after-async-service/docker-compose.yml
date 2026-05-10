@@ -53,7 +53,7 @@ services:
       SPRING_RABBITMQ_HOST: rabbitmq-after
       SPRING_RABBITMQ_USERNAME: after
       SPRING_RABBITMQ_PASSWORD: after
-      APP_INITIAL_STOCK: ${APP_INITIAL_STOCK:-1000}
+      APP_INITIAL_STOCK: ${APP_INITIAL_STOCK:-1000000}
     ports:
       - "8082:8082"
     depends_on:

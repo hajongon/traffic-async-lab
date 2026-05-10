@@ -17,7 +17,7 @@ spring:
         format_sql: true
 
 app:
-  initial-stock: ${APP_INITIAL_STOCK:1000}
+  initial-stock: ${APP_INITIAL_STOCK:1000000}
 
 management:
   endpoints:

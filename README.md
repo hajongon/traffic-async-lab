@@ -34,8 +34,8 @@ curl -X POST http://localhost:8082/orders \
 초기 재고를 늘려 실행하려면 `APP_INITIAL_STOCK`을 지정합니다.
 
 ```bash
-APP_INITIAL_STOCK=100000 bash scripts/reset-before.sh
-APP_INITIAL_STOCK=100000 bash scripts/reset-after.sh
+APP_INITIAL_STOCK=1000000 bash scripts/reset-before.sh
+APP_INITIAL_STOCK=1000000 bash scripts/reset-after.sh
 ```
 
 ## 포트

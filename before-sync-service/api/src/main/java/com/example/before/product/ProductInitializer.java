@@ -11,7 +11,7 @@ public class ProductInitializer implements ApplicationRunner {
     private final ProductRepository productRepository;
     private final int initialStock;
 
-    public ProductInitializer(ProductRepository productRepository, @Value("${app.initial-stock:1000}") int initialStock) {
+    public ProductInitializer(ProductRepository productRepository, @Value("${app.initial-stock:1000000}") int initialStock) {
         this.productRepository = productRepository;
         this.initialStock = initialStock;
     }

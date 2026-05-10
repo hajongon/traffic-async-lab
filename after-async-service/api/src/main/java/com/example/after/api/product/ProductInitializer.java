@@ -16,7 +16,7 @@ public class ProductInitializer implements ApplicationRunner {
     public ProductInitializer(
             ProductRepository productRepository,
             StockService stockService,
-            @Value("${app.initial-stock:1000}") int initialStock
+            @Value("${app.initial-stock:1000000}") int initialStock
     ) {
         this.productRepository = productRepository;
         this.stockService = stockService;
