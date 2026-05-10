@@ -2,11 +2,22 @@
 
 Spring Boot 기반 동기 주문 처리와 비동기 큐 기반 주문 처리를 같은 조건에서 비교하는 실습 프로젝트입니다.
 
+## 버전 명칭
+
+| 내부 식별자 | 표시 명칭 | 상태 | 설명 |
+|---|---|---|---|
+| `before` | 동기 통신 버전 | 구현됨 | HTTP 요청 안에서 주문, 결제, 알림을 모두 동기 처리하는 기준 버전 |
+| `after` | 비동기 통신으로 개선한 버전 | 구현됨 | API p95 latency와 처리량은 개선됐지만 RabbitMQ/Worker backlog가 병목으로 남는 버전 |
+| `async-improved` | 비동기 통신 개선 버전 | 추가 예정 | RabbitMQ/Worker 병목을 줄이는 개선 버전 |
+| `async-improved-2` | 비동기 통신 개선 버전2 | 추가 예정 | 향후 추가될 후속 개선 버전 |
+
+자세한 명칭 기준은 [VERSIONING.md](VERSIONING.md)를 참고합니다.
+
 ## 구조
 
-- `before-sync-service/api`: HTTP 요청 안에서 주문, 결제, 알림을 모두 처리하는 동기 API
-- `after-async-service/api`: 주문 접수, Redis 재고 선차감, RabbitMQ 발행까지만 수행하는 API
-- `after-async-service/worker`: RabbitMQ 메시지를 소비해 결제와 알림을 처리하는 Worker
+- `before-sync-service/api`: 동기 통신 버전 API
+- `after-async-service/api`: 비동기 통신으로 개선한 버전 API
+- `after-async-service/worker`: 비동기 통신으로 개선한 버전 Worker
 - `monitoring`: Prometheus, Grafana 설정
 - `load-tests/k6`: k6 smoke, stress, spike, soak 테스트
 - `before-sync-service/web`, `after-async-service/web`: 수동 확인용 HTML 화면
@@ -40,9 +51,9 @@ APP_INITIAL_STOCK=1000000 bash scripts/reset-after.sh
 
 ## 포트
 
-- Before API: `8081`
-- After API: `8082`
-- After Worker actuator: `8083`
+- 동기 통신 버전 API: `8081`
+- 비동기 통신으로 개선한 버전 API: `8082`
+- 비동기 통신으로 개선한 버전 Worker actuator: `8083`
 - PostgreSQL before: `5432`
 - PostgreSQL after: `5433`
 - Redis after: `6379`
@@ -54,7 +65,7 @@ APP_INITIAL_STOCK=1000000 bash scripts/reset-after.sh
 
 ## 모니터링
 
-Before와 After 서비스를 먼저 실행한 뒤 모니터링을 올립니다.
+동기 통신 버전과 비동기 통신으로 개선한 버전을 먼저 실행한 뒤 모니터링을 올립니다.
 
 ```bash
 make up-before
@@ -90,6 +101,7 @@ HTML 파일을 브라우저에서 열어 주문과 통계를 확인할 수 있�
 
 ## 비교 관점
 
-- Before: 트랜잭션 안에서 결제 300ms, 알림 200ms 지연을 수행하므로 API latency와 DB connection 점유가 증가합니다.
-- After: API는 Redis 재고 차감과 메시지 발행 후 `202 Accepted`를 반환하고, Worker가 느린 후속 처리를 담당합니다.
+- 동기 통신 버전: 트랜잭션 안에서 결제 300ms, 알림 200ms 지연을 수행하므로 API latency와 DB connection 점유가 증가합니다.
+- 비동기 통신으로 개선한 버전: API는 Redis 재고 차감과 메시지 발행 후 `202 Accepted`를 반환하고, Worker가 느린 후속 처리를 담당합니다.
+- 비동기 통신 개선 버전: RabbitMQ/Worker 병목을 줄이는 후속 버전으로 추가 예정입니다.
 - 핵심 관측값은 API p95 latency, error rate, DB connection, Tomcat thread, queue depth, worker throughput입니다.

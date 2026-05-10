@@ -29,6 +29,6 @@ after = load(sys.argv[2])
 
 print("| target | requests | failed_rate | avg_ms | p95_ms |")
 print("| --- | ---: | ---: | ---: | ---: |")
-for name, item in (("before", before), ("after", after)):
+for name, item in (("동기 통신 버전", before), ("비동기 통신으로 개선한 버전", after)):
     print(f"| {name} | {item['requests']:.0f} | {item['failed_rate']:.4f} | {item['avg_ms']:.2f} | {item['p95_ms']:.2f} |")
 PY

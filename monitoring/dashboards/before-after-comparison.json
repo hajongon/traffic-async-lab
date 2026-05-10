@@ -1,5 +1,5 @@
 {
-  "title": "Before After Comparison",
+  "title": "동기 통신 버전 vs 비동기 통신으로 개선한 버전",
   "schemaVersion": 39,
   "version": 1,
   "refresh": "5s",
