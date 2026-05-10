@@ -14,6 +14,8 @@ export const options = {
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8081';
 
+http.setResponseCallback(http.expectedStatuses({ min: 200, max: 399 }, 400));
+
 export default function () {
   const res = http.post(`${BASE_URL}/orders`, JSON.stringify({ productId: 1, userId: `stress-${__VU}-${__ITER}` }), {
     headers: { 'Content-Type': 'application/json' },
